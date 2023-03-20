@@ -1,0 +1,77 @@
+#Натуральные числа. Выводит на экран числа, которые не содержат цифры, введенной с клавиатуры. Первое и последнее число выводятся прописью.
+digit_to_word = {
+    '0': 'ноль',
+    '1': 'один',
+    '2': 'два',
+    '3': 'три',
+    '4': 'четыре',
+    '5': 'пять',
+    '6': 'шесть',
+    '7': 'семь',
+    '8': 'восемь',
+    '9': 'девять'
+}
+
+digit = input('Введите цифру: ')
+
+if any(char == digit for char in digit_to_word.keys()):
+    with open('123.txt') as f:
+        text = f.read()
+
+    buffer = ''
+    for char in text:
+        if char.isdigit():
+            buffer += char
+        else:
+            if buffer:
+                number = int(buffer)
+                if 'first' not in locals():
+                    first = number
+                last = number
+                buffer = ''
+    if buffer:
+        number = int(buffer)
+        if 'first' not in locals():
+            first = number
+        last = number
+
+    result = ''
+    while first > 0:
+        result = digit_to_word[str(first % 10)] + ' ' + result
+        first //= 10
+    print(result.strip() or digit_to_word['0'])
+
+    result = ''
+    while last > 0:
+        result = digit_to_word[str(last % 10)] + ' ' + result
+        last //= 10
+    print(result.strip() or digit_to_word['0'])
+else:
+    with open('text.txt') as f:
+        text = f.read()
+
+    buffer = ''
+    numbers_without_digit = []
+    for char in text:
+        if char.isdigit():
+            buffer += char
+        else:
+            if buffer:
+                number = int(buffer)
+                if digit not in str(number):
+                    numbers_without_digit.append(number)
+                buffer = ''
+    if buffer:
+        number = int(buffer)
+        if digit not in str(number):
+            numbers_without_digit.append(number)
+
+    if numbers_without_digit:
+        for number in numbers_without_digit:
+            result = ''
+            while number > 0:
+                result = digit_to_word[str(number % 10)] + ' ' + result
+                number //= 10
+            print(result.strip())
+    else:
+        print(digit_to_word['0'])

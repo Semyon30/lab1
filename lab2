@@ -1,0 +1,32 @@
+import re
+digit_to_word = {
+    '0': 'ноль',
+    '1': 'один',
+    '2': 'два',
+    '3': 'три',
+    '4': 'четыре',
+    '5': 'пять',
+    '6': 'шесть',
+    '7': 'семь',
+    '8': 'восемь',
+    '9': 'девять'
+}
+
+with open('123.txt') as f:
+    text = f.read()
+
+numbers = re.findall(r'\d+', text)
+first, last = map(int, (numbers[0], numbers[-1]))
+exclude = input('Введите цифру для исключения: ')
+
+result = ''
+while first > 0:
+    result = digit_to_word[str(first % 10)] + ' ' + result
+    first //= 10
+print(result.strip() or digit_to_word['0'])
+
+result = ''
+while last > 0:
+    result = digit_to_word[str(last % 10)] + ' ' + result
+    last //= 10
+print(result.strip() or digit_to_word['0'])

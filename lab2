@@ -1,4 +1,4 @@
-#Натуральные числа. Выводит на экран числа, которые не содержат цифры, введенной с клавиатуры. Первое и последнее число выводятся прописью.
+
 import re 
 
 def number_contains_digit(number, digit):
@@ -20,7 +20,7 @@ def convert_number_to_words(number):
     return " ".join(words[digit] for digit in number)
 
 def process_numbers(file_path, block_size, digit_to_exclude):
-    pattern = r"(?<![!\-])\b[0-9]+\b"
+    pattern = r"(?<![!\-])((?<![\"\'])\b[0-9]+\b(?![\"\']))"
     with open(file_path, "r", encoding="utf-8") as file:
         first_number = True
         last_number = None

@@ -1,0 +1,76 @@
+# Задана рекуррентная функция. Область определения функции – натуральные числа. Написать программу сравнительного вычисления данной функции рекурсивно и итерационно. Определить (смоделировать) границы применимости рекурсивного и итерационного подхода. Результаты сравнительного исследования времени вычисления представить в табличной и графической форме в виде отчета по лабораторной работе.
+import timeit
+from prettytable import PrettyTable
+import matplotlib.pyplot as plt
+#функция-декоратор
+def memoize(func):
+    cache = {}
+    def wrapper(n):
+        if n not in cache:
+            cache[n] = func(n)
+        return cache[n]
+    return wrapper
+
+
+def F_recursive(n):
+    if n == 1:
+        return 1
+    else:
+        return 2*F_recursive(n-1) - G_recursive(n-1)
+
+@memoize
+def G_recursive(n):
+    if n == 1:
+        return 1
+    else:
+        return F_recursive(n-1) + 2*G_recursive(n-1)
+
+def F_iterative(n):
+    F = [0] * (n+1)
+    G = [0] * (n+1)
+    F[1] = G[1] = 1
+    for i in range(2, n+1):
+        F[i] = 2*F[i-1] - G[i-1]
+        G[i] = F[i-1] + 2*G[i-1]
+    return F[n]
+
+def G_iterative(n):
+    F = [0] * (n+1)
+    G = [0] * (n+1)
+    F[1] = G[1] = 1
+    for i in range(2, n+1):
+        F[i] = 2*F[i-1] - G[i-1]
+        G[i] = F[i-1] + 2*G[i-1]
+    return G[n]
+
+# сравнение времени выполнения рекурсивной и итерационной функций для разных значений n
+n_values = list(range(3, 10))
+recursive_time_F = []
+recursive_time_G = []
+iterative_time_F = []
+iterative_time_G = []
+for n in n_values:
+    recursive_time_F.append(timeit.timeit(lambda: F_recursive(n), number=1000))
+    recursive_time_G.append(timeit.timeit(lambda: G_recursive(n), number=1000))
+    iterative_time_F.append(timeit.timeit(lambda: F_iterative(n), number=1000))
+    iterative_time_G.append(timeit.timeit(lambda: G_iterative(n), number=1000))
+
+# вывод таблицы
+table = PrettyTable()
+table.field_names = ["Function", "Type", "Result", "Time (s)"]
+table.add_row(["F", "Recursive", F_recursive(15), recursive_time_F[-1]])
+table.add_row(["G", "Recursive", G_recursive(15), recursive_time_G[-1]])
+table.add_row(["F", "Iterative", F_iterative(15), iterative_time_F[-1]])
+table.add_row(["G", "Iterative", G_iterative(15), iterative_time_G[-1]])
+print(table)
+
+# вывод графика
+plt.plot(n_values, recursive_time_F, label="F recursive")
+plt.plot(n_values, recursive_time_G, label="G recursive")
+plt.plot(n_values, iterative_time_F, label="F iterative")
+plt.plot(n_values, iterative_time_G, label="G iterative")
+plt.xlabel('n')
+plt.ylabel('Time (s)')
+plt.title('Execution time for F(n) and G(n)')
+plt.legend()
+plt.show()

@@ -1,1 +1,86 @@
-4534543 402010 = 212124421:17 
+import numpy as np
+import matplotlib.pyplot as plt
+
+def generate_matrix_A(N):
+    B = np.random.randint(-10, 11, (N // 2, N // 2))
+    C = np.random.randint(-10, 11, (N // 2, N // 2))
+    D = np.random.randint(-10, 11, (N // 2, N // 2))
+    E = np.random.randint(-10, 11, (N // 2, N // 2))
+
+    A = np.block([[E, B],
+                  [D, C]])
+    return A
+
+def create_matrix_F(A, N):
+    E, B, D, C = A[:N//2, :N//2], A[:N//2, N//2:], A[N//2:, :N//2], A[N//2:, N//2:]
+
+    odd_col_primes = np.sum(np.all(np.mod(C[:, ::2], np.arange(2, C.shape[0]+1).reshape(-1, 1)) != 0, axis=0))
+    even_row_sum = np.sum(E[::2, :])
+
+    if odd_col_primes > even_row_sum:
+        F = np.block([[E, C],
+                      [D, B]])
+    else:
+        F = np.block([[C, B],
+                      [D, E]])
+
+    return F
+
+def perform_matrix_operations(A, F, K):
+    det_A = np.linalg.det(A)
+    diag_sum_F = np.trace(F)
+
+    A_inv = np.linalg.inv(A)
+    F_inv = np.linalg.inv(F)
+    A_T = A.T
+    G = np.tril(A)
+
+    if det_A > diag_sum_F:
+        result = A_inv @ A_T - K * F_inv
+    else:
+        result = (A_inv + G - F_inv) * K
+
+    return result, G
+
+def plot_matrices(A, F, result):
+    fig, axes = plt.subplots(1, 4, figsize=(16, 4))
+
+    axes[0].imshow(A, cmap='viridis')
+    axes[0].set_title('Matrix A')
+
+    axes[1].imshow(F, cmap='viridis')
+    axes[1].set_title('Matrix F')
+
+    axes[2].imshow(result, cmap='viridis')
+    axes[2].set_title('Result')
+
+    G = np.tril(A)
+    axes[3].imshow(G, cmap='viridis')
+    axes[3].set_title('Matrix G')
+
+    plt.show()
+
+K = 2
+N = 4
+
+np.set_printoptions(precision=7, suppress=True)
+A = generate_matrix_A(N)
+print("Matrix A:")
+np.set_printoptions(precision=7, suppress=True)
+print(A)
+
+F = create_matrix_F(A, N)
+print("Matrix F:")
+np.set_printoptions(precision=7, suppress=True)
+print(F)
+
+result, G = perform_matrix_operations(A, F, K)
+print("Result:")
+np.set_printoptions(precision=7, suppress=True)
+print(result)
+
+print("Matrix G:")
+np.set_printoptions(precision=7, suppress=True)
+print(G)
+
+plot_matrices(A, F, result)

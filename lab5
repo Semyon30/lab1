@@ -1,16 +1,9 @@
 # Задана рекуррентная функция. Область определения функции – натуральные числа. Написать программу сравнительного вычисления данной функции рекурсивно и итерационно. Определить (смоделировать) границы применимости рекурсивного и итерационного подхода. Результаты сравнительного исследования времени вычисления представить в табличной и графической форме в виде отчета по лабораторной работе.
-F(1)=1;G(1)=1;F(n)=2*F(n-1)-G(n-1),G(n)=F(n-1)+2*G(n-1) при n>=2
+#F(1)=1;G(1)=1;F(n)=2*F(n-1)-G(n-1),G(n)=F(n-1)+2*G(n-1) при n>=2
 import timeit
 from prettytable import PrettyTable
 import matplotlib.pyplot as plt
-#функция-декоратор
-def memoize(func):
-    cache = {}
-    def wrapper(n):
-        if n not in cache:
-            cache[n] = func(n)
-        return cache[n]
-    return wrapper
+
 
 
 def F_recursive(n):
@@ -19,7 +12,7 @@ def F_recursive(n):
     else:
         return 2*F_recursive(n-1) - G_recursive(n-1)
 
-@memoize
+
 def G_recursive(n):
     if n == 1:
         return 1

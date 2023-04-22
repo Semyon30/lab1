@@ -1,0 +1,51 @@
+Формируется матрица F следующим образом: если в С количество положительных элементов в четных столбцах в области 2 больше, чем количество отрицательных  элементов в нечетных столбцах в области 4, то поменять в С симметрично области 1 и 3 местами, иначе С и Е поменять местами несимметрично. При этом матрица А не меняется. После чего вычисляется выражение: (F+A)*AT – K * F. Выводятся по мере формирования А, F и все матричные операции последовательно.
+
+import random
+
+# Считываем два числа K и N с клавиатуры
+K = int(input("Введите K: "))
+N = int(input("Введите N: "))
+
+# Создаем матрицу A размером N на N, состоящую из 4-х равных подматриц B, C, D и E,
+# заполненных случайными целыми числами в интервале [-10, 10]
+A = [[random.randint(-10, 10) for j in range(N)] for i in range(N)]
+B = [row[:N//2] for row in A[:N//2]]
+C = [row[N//2:] for row in A[:N//2]]
+D = [row[:N//2] for row in A[N//2:]]
+E = [row[N//2:] for row in A[N//2:]]
+print("Матрица A:")
+for row in A:
+    print(row)
+print()
+
+# Формируем матрицу F согласно условию задачи
+C_area2_pos = sum(C[i][j] > 0 for i in range(N//2) for j in range(N//2) if j % 2 == 0)
+C_area2_neg = sum(C[i][j] < 0 for i in range(N//2) for j in range(N//2) if j % 2 == 1)
+if C_area2_pos > C_area2_neg:
+    F = [[0]*N for i in range(N)]
+    for i in range(N//2):
+        F[i][:N//2] = C[i][N//2:]
+        F[i][N//2:] = C[i][:N//2]
+        F[N//2+i][:N//2] = A[N//2+i][:N//2]
+        F[N//2+i][N//2:] = A[N//2+i][N//2:]
+else:
+    F = [[0]*N for i in range(N)]
+    for i in range(N//2):
+        F[i][:N//2] = A[i][:N//2]
+        F[i][N//2:] = E[i]
+        F[N//2+i][:N//2] = D[i][:N//2]
+        F[N//2+i][N//2:] = C[i]
+print("Матрица F:")
+for row in F:
+    print(row)
+print()
+
+# Вычисляем выражение (F+A)*AT - K*F
+AT = [[A[j][i] for j in range(N)] for i in range(N)]
+res = [[0]*N for i in range(N)]
+for i in range(N):
+    for j in range(N):
+        res[i][j] = sum((F[i][k]+A[k][j])*AT[i][k] for k in range(N)) - K*F[i][j]
+print("Результат выражения (F+A)*AT - K*F:")
+for row in res:
+    print(row)

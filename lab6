@@ -1,0 +1,36 @@
+#В комиссии К членов выбирается председатель и заместитель. Вывести все возможные варианты.
+
+#первая часть задания
+K = int(input("Введите количество членов комиссии: "))
+
+for i in range(1, K+1):
+    for j in range(1, K+1):
+        if i != j:
+            print("Председатель:", i)
+            print("Заместитель:", j)
+
+
+
+#вторая часть задания
+K = int(input("Введите количество членов комиссии: "))
+
+members = []
+for i in range(1, K+1):
+    name = input("Введите имя члена комиссии: ")
+    experience = int(input("Введите опыт работы члена комиссии: "))
+    members.append((name, experience))
+
+max_experience = 0
+chairman = None    # Define chairman before loops
+deputy = None      # Define deputy before loops
+for i in range(K):
+    for j in range(K):
+        if i != j:
+            experience_sum = members[i][1] + members[j][1]
+            if experience_sum > max_experience:
+                max_experience = experience_sum
+                chairman = members[i][0]
+                deputy = members[j][0]
+
+print("Председатель:", chairman)
+print("Заместитель:", deputy)

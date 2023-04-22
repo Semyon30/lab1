@@ -21,8 +21,8 @@ for i in range(1, K+1):
     members.append((name, experience))
 
 max_experience = 0
-chairman = None    # Define chairman before loops
-deputy = None      # Define deputy before loops
+chairman = None    
+deputy = None      
 for i in range(K):
     for j in range(K):
         if i != j:

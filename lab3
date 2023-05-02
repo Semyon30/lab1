@@ -95,7 +95,12 @@ n = len(C) # размерность матрицы C
 count_4 = count_negative_odd_cols(C) # подсчет количества отрицательных элементов в нечетных столбцах в области 4 матрицы C
 
 print(f'Количество отрицательных элементов в матрице С в области 4 в нечетных столбцах: {count_4}')
-
+F = []
+for row in range(N):
+    cur_row = []
+    for col in range(N):
+        cur_row.append(A[row][col])
+    F.append(cur_row)
 if count_2 > count_4:
     for i in range(n):
         for j in range(n//2):
@@ -104,11 +109,21 @@ if count_2 > count_4:
 
 
 
-if count_2 <= count_4:
-    C, E = E, C
+else:   
+ if N % 2 == 0:
+  step = N // 2
+ else:
+        step = N // 2 + 1
+ for row in range(n):
+        for col in range(n):
+            F[row][col] = C[row][col]
+            F[row][col + step] = B[row][col]
+            F[row + step][col] = D[row][col]
+            F[row + step][col + step] = E[row][col]
 
-print(C)
-print(E)
+print('Матрица F:')
+for row in range(N):
+    print(F[row])
 
 
     
@@ -157,6 +172,5 @@ for row in AT:
 print("Результат выражения (F+A)*AT - K*F:")
 for row in result:
     print(row)
-
 
 

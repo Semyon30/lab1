@@ -1,77 +1,162 @@
+# Формируется матрица F следующим образом: если в С количество нулевых элементов в нечетных столбцах в области 4 больше, чем количество нулевых  элементов в четных столбцах в области 1,
+# то поменять в В симметрично области 2 и 3 местами, иначе С и Е поменять местами несимметрично. При этом матрица А не меняется.
+# После чего вычисляется выражение: ((F * A) – (K * Aт). Выводятся по мере формирования А, F и все матричные операции последовательно.
+
 import random
 
-# Считываем два числа K и N с клавиатуры
-K = int(input("Введите K: "))
-N = int(input("Введите N: "))
+K_test = 3
+N_test = 11
+A_test = [
+    [1, 2, 3, 4, 5, 4, -9, 8, -1, 5, 3],
+    [6, 7, 8, 9, 10, 2, -4, -8, -5, -1, 3],
+    [10, 9, 8, 7, 6, 9, -3, 3, 5, -1, -9],
+    [5, 4, 3, 2, 1, -5, 2, 7, 3, 8, 0],
+    [1, 2, 3, 4, 5, -4, 3, 3, -2, 4, -1],
+    [-1, 8, 6, 10, -3, 7, -8, -9, -9, -5, 2],
+    [-2, -6, -3, 1, 2, -3, 0, 5, 0, 0, 7],
+    [-7, 10, -4, -8, -9, -9, 0, 5, 0, -10, -4],
+    [3, 6, -9, 7, 2, -10, 4, 0, 2, -4, 0],
+    [10, 9, 9, 5, 8, -8, -8, 0, 10, -7, 1],
+    [6, -5, 0, 1, -5, -3, -5, 0, 7, -2, 0]]
 
-# Создаем матрицу A размером N на N, состоящую из 4-х равных подматриц B, C, D и E,
-# заполненных случайными целыми числами в интервале [-10, 10]
-A = [[random.randint(-10, 10) for j in range(N)] for i in range(N)]
-B = [row[:N//2] for row in A[:N//2]]
-C = [row[N//2:] for row in A[:N//2]]
-D = [row[:N//2] for row in A[N//2:]]
-E = [row[N//2:] for row in A[N//2:]]
+print('Использовать тестовые данные или случайные?')
+choice = input('Ваш выбор (1 - тестовые данные, 2 - случайные, q-выход): ')
 
+if choice == '1':
+    K = K_test
+    N = N_test
+    A = A_test
+
+if choice == '2':
+    K = int(input('Введите K: '))
+    N = int(input('Введите N: '))
+
+    if (N < 6):
+        print('Ошибка в исходных данных. Длина сторон матрицы А (N,N) должна быть больше 5!')
+        exit()
+
+    A = []
+    for row in range(N):
+        cur_row = []
+        for col in range(N):
+            cur_row.append(random.randint(-10, 10))
+        A.append(cur_row)
+
+B, C, D, E = [], [], [], []
+n = N // 2  # размерность матриц B, C, D, E (n x n)
+
+if N % 2 == 0:
+    step = N // 2
+else:
+    step = N // 2 + 1
+
+for row in range(n):
+    row_b, row_c, row_d, row_e = [], [], [], []
+    for col in range(n):
+        row_e.append(A[row][col])
+        row_b.append(A[row][col + step])
+        row_d.append(A[row + step][col])
+        row_c.append(A[row + step][col + step])
+    B.append(row_b)
+    C.append(row_c)
+    D.append(row_d)
+    E.append(row_e)
+
+if choice == 'q':
+    exit()
+
+
+
+# количество положительных элементов в четных столбцах в области 2
+def count_positive_even_cols(matrix):
+    count_2 = 0
+    n = len(matrix) # размерность матрицы C
+    for j in range(1, n, 2): # проходим по четным столбцам
+        for i in range(1, 3): # проходим по области 2
+            if matrix[i][j] > 0:
+                count_2 += 1
+    return count_2
+
+n = len(C) # размерность матрицы C
+count_2 = count_positive_even_cols(C) # подсчет количества положительных элементов в четных столбцах в области 2 матрицы C
+
+print(f'Количество положительных элементов в матрице С в области 2 в четных столбцах: {count_2}')
+#количество отрицательных  элементов в нечетных столбцах в области 4
+def count_negative_odd_cols(matrix):
+    count_4 = 0
+    n = len(matrix) # размерность матрицы C
+    for j in range(0, n, 2): # проходим по нечетным столбцам
+        for i in range(2, n): # проходим по области 4
+            if matrix[i][j] < 0:
+                count_4 += 1
+    return count_4
+
+n = len(C) # размерность матрицы C
+count_4 = count_negative_odd_cols(C) # подсчет количества отрицательных элементов в нечетных столбцах в области 4 матрицы C
+
+print(f'Количество отрицательных элементов в матрице С в области 4 в нечетных столбцах: {count_4}')
+
+if count_2 > count_4:
+    for i in range(n):
+        for j in range(n//2):
+            C[i][j], C[i][n-j-1] = C[i][n-j-1], C[i][j]
+
+
+
+
+if count_2 <= count_4:
+    C, E = E, C
+
+print(C)
+print(E)
+
+
+    
+
+
+import random
+
+n = 5 # размерность матриц
+A = [[0] * n for i in range(n)] # создаем матрицу A, заполненную нулями
+for i in range(n):
+    for j in range(n):
+        if i < j:
+            A[i][j] = random.randint(0, 9) # заполняем верхний треугольник матрицы случайными числами
+
+F = [[random.randint(0, 9)] * n for i in range(n)] # создаем матрицу F, заполненную случайными числами
+K = [[random.randint(0, 9)] * n for i in range(n)] # создаем матрицу K, заполненную случайными числами
+
+AT = [[0] * n for i in range(n)] # создаем матрицу AT, заполненную нулями
+for i in range(n):
+    for j in range(n):
+        AT[i][j] = A[j][i] # транспонируем матрицу A
+
+# вычисляем выражение (F+A)*AT - K*F
+FA = [[F[i][j] + A[i][j] for j in range(n)] for i in range(n)] # вычисляем сумму матриц F и A
+FA_T = [[0] * n for i in range(n)] # создаем матрицу F*A^T, заполненную нулями
+for i in range(n):
+    for j in range(n):
+        for k in range(n):
+            FA_T[i][j] += FA[i][k] * AT[j][k] # вычисляем произведение (F+A)*AT
+KF = [[K[i][j] * F[i][j] for j in range(n)] for i in range(n)] # вычисляем произведение K*F
+result = [[FA_T[i][j] - KF[i][j] for j in range(n)] for i in range(n)] # вычисляем разность (F+A)*AT - K*F
+
+# выводим все матрицы и результат
 print("Матрица A:")
 for row in A:
     print(row)
-print()
-
-print("Матрица B:")
-for row in B:
-    print(row)
-print()
-
-print("Матрица C:")
-for row in C:
-    print(row)
-print()
-
-print("Матрица D:")
-for row in D:
-    print(row)
-print()
-
-print("Матрица E:")
-for row in E:
-    print(row)
-print()
-
-# Создаем тестируемую матрицу T размером N на N, заполненную случайными целыми числами в интервале [-10, 10]
-T = [[random.randint(-10, 10) for j in range(N)] for i in range(N)]
-print("Тестируемая матрица T:")
-for row in T:
-    print(row)
-print()
-
-# Формируем матрицу F согласно условию задачи
-C_area2_pos = sum(C[i][j] > 0 for i in range(N//2) for j in range(N//2) if j % 2 == 0)
-C_area2_neg = sum(C[i][j] < 0 for i in range(N//2) for j in range(N//2) if j % 2 == 1)
-if C_area2_pos > C_area2_neg:
-    F = [[0]*N for i in range(N)]
-    for i in range(N//2):
-        F[i][:N//2] = C[i][N//2:]
-        F[i][N//2:] = C[i][:N//2]
-        F[N//2+i][:N//2] = A[N//2+i][:N//2]
-        F[N//2+i][N//2:] = A[N//2+i][N//2:]
-else:
-    F = [[0]*N for i in range(N)]
-    for i in range(N//2):
-        F[i][:N//2] = A[i][:N//2]
-        F[i][N//2:] = E[i]
-        F[N//2+i][:N//2] = D[i][:N//2]
-        F[N//2+i][N//2:] = C[i]
 print("Матрица F:")
 for row in F:
     print(row)
-print()
-
-# Вычисляем выражение (F+A)*AT - K*F
-AT = [[A[j][i] for j in range(N)] for i in range(N)]
-res = [[0]*N for i in range(N)]
-for i in range(N):
-    for j in range(N):
-        res[i][j] = sum((F[i][k]+A[k][j])*AT[i][k] for k in range(N)) - K*F[i][j]
-print("Результат выражения (F+A)*AT - K*F:")
-for row in res:
+print("Матрица K:")
+for row in K:
     print(row)
+print("Матрица AT:")
+for row in AT:
+    print(row)
+print("Результат выражения (F+A)*AT - K*F:")
+for row in result:
+    print(row)
+
+
+

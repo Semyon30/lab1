@@ -1,0 +1,48 @@
+#комиссии К членов выбирается председатель и заместитель. Вывести все возможные варианты.
+
+class CommissionMember:
+    def __init__(self, name, gender, experience):
+        self.name = name
+        self.gender = gender
+        self.experience = experience
+
+class Commission:
+    def __init__(self):
+        self.members = []
+    
+    def add_member(self, name, gender, experience):
+        member = CommissionMember(name, gender, experience)
+        self.members.append(member)
+    
+    def find_chairman_and_deputy(self):
+        max_experience = 0
+        chairman = None    
+        deputy = None      
+        for i in range(len(self.members)):
+            for j in range(len(self.members)):
+                if i != j and self.members[i].gender == 'м' and self.members[j].gender == 'ж':
+                    experience_sum = self.members[i].experience + self.members[j].experience
+                    if experience_sum > max_experience:
+                        max_experience = experience_sum
+                        chairman = self.members[i].name
+                        deputy = self.members[j].name
+        print("Председатель:", chairman)
+        print("Заместитель:", deputy)
+
+commission = Commission()
+
+K = int(input("Введите количество членов комиссии: "))
+
+for i in range(1, K+1):
+    name = input("Введите имя члена комиссии: ")
+    gender = input("Введите пол члена комиссии (м/ж): ")
+    experience = int(input("Введите опыт работы члена комиссии: "))
+    commission.add_member(name, gender, experience)
+
+commission.find_chairman_and_deputy()
+
+#используются два класса(CommissionMember и Commission)
+#атрибуты в классе CommisionMember(name, gender, experience)
+#атрибуты в классе Commision(members)
+#в классе Commission используются два метода(add_member, find_chairman_and_deputy(self)
+#в классе Commission используется один метод(__init__(self, name, gender, experience)

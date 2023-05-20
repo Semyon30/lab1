@@ -71,8 +71,8 @@ if choice == 'q':
 count = 0
 def count_positive_even_cols(matrix):
  for i in range(len(matrix)):
-    if 1 <= i <= len(matrix) // 2:  # проверяем, что мы находимся в области 2
-        for j in range(0, len(matrix[i]), 2):  # проходим только по четным столбцам
+    if 1 <= i <= len(matrix) // 2:  
+        for j in range(0, len(matrix[i]), 2):  
             if matrix[i][j] > 0:
                 count += 1
 print(f'Количество положительных элементов в матрице С в области 2 в четных столбцах: {count}')

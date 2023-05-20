@@ -68,40 +68,30 @@ if choice == 'q':
 
 
 # количество положительных элементов в четных столбцах в области 2
+count = 0
 def count_positive_even_cols(matrix):
-    count_2 = 0
-    n = len(matrix) # размерность матрицы C
-    for j in range(1, n, 2): # проходим по четным столбцам
-        for i in range(1, 3): # проходим по области 2
+ for i in range(len(matrix)):
+    if 1 <= i <= len(matrix) // 2:  # проверяем, что мы находимся в области 2
+        for j in range(0, len(matrix[i]), 2):  # проходим только по четным столбцам
             if matrix[i][j] > 0:
-                count_2 += 1
-    return count_2
-
-n = len(C) # размерность матрицы C
-count_2 = count_positive_even_cols(C) # подсчет количества положительных элементов в четных столбцах в области 2 матрицы C
-
-print(f'Количество положительных элементов в матрице С в области 2 в четных столбцах: {count_2}')
+                count += 1
+print(f'Количество положительных элементов в матрице С в области 2 в четных столбцах: {count}')
 #количество отрицательных  элементов в нечетных столбцах в области 4
+count1 = 0
 def count_negative_odd_cols(matrix):
-    count_4 = 0
-    n = len(matrix) # размерность матрицы C
-    for j in range(0, n, 2): # проходим по нечетным столбцам
-        for i in range(2, n): # проходим по области 4
+ for i in range(len(matrix)):
+    if i >= len(matrix) // 2:  
+        for j in range(1, len(matrix[i]), 2): 
             if matrix[i][j] < 0:
-                count_4 += 1
-    return count_4
-
-n = len(C) # размерность матрицы C
-count_4 = count_negative_odd_cols(C) # подсчет количества отрицательных элементов в нечетных столбцах в области 4 матрицы C
-
-print(f'Количество отрицательных элементов в матрице С в области 4 в нечетных столбцах: {count_4}')
+                count += 1
+print(f'Количество отрицательных элементов в матрице С в области 4 в нечетных столбцах: {count1}')
 F = []
 for row in range(N):
     cur_row = []
     for col in range(N):
         cur_row.append(A[row][col])
     F.append(cur_row)
-if count_2 > count_4:
+if count > count1:
     for i in range(n):
         for j in range(n//2):
             C[i][j], C[i][n-j-1] = C[i][n-j-1], C[i][j]
@@ -202,4 +192,5 @@ for row in range(N):
 print('Результат: ')
 for row in range(N):
     print(result_matrix[row])
+
 

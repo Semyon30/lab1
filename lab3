@@ -66,7 +66,7 @@ if choice == 'q':
 
 
 
-# количество положительных элементов в четных столбцах в области 2
+
 def count_positive_even_cols(matrix):
     global count
     count = 0
@@ -77,10 +77,10 @@ def count_positive_even_cols(matrix):
                     count += 1
     return count
 count = count_positive_even_cols(C)
-print(f'Количество положительных элементов в матрице С в области 2 в четных столбцах: {count}')
+print(f'Количество отрицательных  элементов в матрице С в области 4 в нечетных столбцах: {count}')
 
 
-#количество отрицательных  элементов в нечетных столбцах в области 4
+
 def count_negative_odd_cols(matrix):
     global count1
     count1 = 0
@@ -91,7 +91,7 @@ def count_negative_odd_cols(matrix):
                     count1 += 1
     return count1
 count1=count_negative_odd_cols(C)
-print(f'Количество отрицательных  элементов в матрице С в области 4 в нечетных столбцах: {count1}')
+print(f'Количество положительных  элементов в матрице С в области 2 в четных столбцах: {count1}')
 
 F = []
 for row in range(N):

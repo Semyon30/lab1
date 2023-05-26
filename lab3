@@ -1,159 +1,199 @@
 # Формируется матрица F следующим образом: если в С количество положительных элементов в четных столбцах в области 2
 # больше, чем количество отрицательных  элементов в нечетных столбцах в области 4, то поменять в С симметрично
 # области 1 и 3 местами, иначе С и Е поменять местами несимметрично. При этом матрица А не меняется. После чего
-# вычисляется выражение: (F+A)*AT – K * F. Выводятся по мере формирования А, F и все матричные операции последовательно.
+# После чего вычисляется выражение: ((F * A) – (K * Aт). Выводятся по мере формирования А, F и все матричные операции последовательно.
 
-#                           1
-#    E    B            4         2
-#    D    C                 3
 
-from random import randint
-N = int(input('Матрица размером NxN\nВведите N='))
-while N < 5:
-    print('Вы ввели число, не подходящие по условию, введите число N, большее или равное 5')
-    N = int(input())
-K = int(input('Коэффициент умножения на матрицу F\nВведите k='))
-print()
-print()
-print('границы подматриц и областей не включаются')
+import random
 
-arr = []
-for i in range(N):
-    arr.append([])
-    for j in range(N):
-        arr[i].append(randint(-10, 10))                           #заполнение матрицы А случайными числами от -10 до 10
+K_test = 3
+N_test = 11
+A_test = [
+    [1, 2, 3, 4, 5, 4, -9, 8, -1, 5, 3],
+    [6, 7, 8, 9, 10, 2, -4, -8, -5, -1, 3],
+    [10, 9, 8, 7, 6, 9, -3, 3, 5, -1, -9],
+    [5, 4, 3, 2, 1, -5, 2, 7, 3, 8, 0],
+    [1, 2, 3, 4, 5, -4, 3, 3, -2, 4, -1],
+    [-1, 8, 6, 10, -3, 7, -8, -9, -9, -5, 2],
+    [-2, -6, -3, 1, 2, -3, 0, 5, 0, 0, 7],
+    [-7, 10, -4, -8, -9, -9, 0, 5, 0, -10, -4],
+    [3, 6, -9, 7, 2, -10, 4, 0, 2, -4, 0],
+    [10, 9, 9, 5, 8, -8, -8, 0, 10, -7, 1],
+    [6, -5, 0, 1, -5, -3, -5, 0, 7, -2, 0]]
 
-print('A')
-for i in range(N):                                                #вывод матрицы А
-    for j in range(N):
-        print('{:4d}'.format(arr[i][j]), end='')
-    print()
+print('Использовать тестовые данные или случайные?')
+choice = input('Ваш выбор (1 - тестовые данные, 2 - случайные, q-выход): ')
 
-frr = []
-for i in range(N):                                                #заполнение матрици F элементами матрицы А
-    frr.append([])
-    for j in range(N):
-        frr[i].append(arr[i][j])
+if choice == '1':
+    K = K_test
+    N = N_test
+    A = A_test
 
-A = 0
-B = 0
-for i in range((N + 1) // 2, N):
-    for j in range((N + 1) // 2, N):
-        x = i - ((N + 1) // 2)
-        y = j - ((N + 1) // 2)
-        if (y % 2 != 0) and (x - y < 0) and (x + y > (N // 2) - 1) and frr[i][j] > 0:#условие для 2 области подматрицы С
-            A += 1
-        if (y % 2 == 0) and (x - y > 0) and (x + y < (N // 2) - 1) and frr[i][j] < 0:#условие для 4 области подматрицы С
-            B += 1
-print('количество положительных чисел A в области 2\nа = ', A, '\nколичество отрицательных чисел B в области 4\nb = ', B)
-if A > B:
-    print('A > B')
-    print('первое условие: поменять в С симметрично области 1 и 3 местами')
-    for i in range((N + 1) // 2, ((N + 1) // 2) + (N // 4)): #смена элементов области 1 и 3 подматрици С
-        x = i - ((N + 1) // 2)
-        for j in range(((N + 1) // 2) + x + 1, N - x - 1):
-            y = j - ((N + 1) // 2)
-            frr[((N // 2) - 1) - x + ((N + 1) // 2)][((N // 2) - 1) - y + ((N + 1) // 2)], frr[i][j] = \
-                frr[i][j], frr[((N // 2) - 1) - x + ((N + 1) // 2)][((N // 2) - 1) - y + ((N + 1) // 2)]
+if choice == '2':
+    K = int(input('Введите K: '))
+    N = int(input('Введите N: '))
+
+    if (N < 6):
+        print('Ошибка в исходных данных. Длина сторон матрицы А (N,N) должна быть больше 5!')
+        exit()
+
+    A = []
+    for row in range(N):
+        cur_row = []
+        for col in range(N):
+            cur_row.append(random.randint(-10, 10))
+        A.append(cur_row)
+
+B, C, D, E = [], [], [], []
+n = N // 2  # размерность матриц B, C, D, E (n x n)
+
+if N % 2 == 0:
+    step = N // 2
 else:
-    print('A <= B')
-    print('второе условие: С и Е поменять местами несимметрично')
-    for i in range(N // 2):                                   #смена элементов подматриц С и Е
-        for j in range(N//2):
-            frr[i][j], frr[i + ((N + 1) // 2)][j + ((N + 1) // 2)] = \
-                frr[i + ((N + 1) // 2)][j + ((N + 1) // 2)], frr[i][j]
+    step = N // 2 + 1
 
-print('F')
-for i in range(N):                                            #вывод матрици F
-    for j in range(N):
-        print('{:4d}'.format(frr[i][j]), end='')
-    print()
+for row in range(n):
+    row_b, row_c, row_d, row_e = [], [], [], []
+    for col in range(n):
+        row_e.append(A[row][col])
+        row_b.append(A[row][col + step])
+        row_d.append(A[row + step][col])
+        row_c.append(A[row + step][col + step])
+    B.append(row_b)
+    C.append(row_c)
+    D.append(row_d)
+    E.append(row_e)
+
+if choice == 'q':
+    exit()
+
+# печатаем матрицы E, B, C, D, A
+print('Матрица E:')
+for row in range(n):
+    print(E[row])
+
+print('Матрица B:')
+for row in range(n):
+    print(B[row])
+
+print('Матрица C:')
+for row in range(n):
+    print(C[row])
+
+print('Матрица D:')
+for row in range(n):
+    print(D[row])
+
+print('Матрица A:')
+for row in range(N):
+    print(A[row])
+
+# количество положительных элементов в четных столбцах в области 2
+def count_positive_even_cols(matrix):
+    count = 0
+    for i in range(len(matrix)):
+     if 1 <= i <= len(matrix) // 2:  
+        for j in range(0, len(matrix[i]), 2):  
+             if matrix[i][j] > 0:
+              count += 1
+    return count
+count = count_positive_even_cols(C)
+print(f'Количество положительных элементов в матрице С в области 2 в четных столбцах: {count}')
+
+#количество отрицательных  элементов в нечетных столбцах в области 4
+def count_negative_odd_cols(matrix):
+    count1 = 0
+    for i in range(len(matrix)):
+        if i >= len(matrix) // 2:  
+            for j in range(1, len(matrix[i]), 2): 
+                if matrix[i][j] < 0:
+                    count1 += 1
+    return count1
+
+count1 = count_negative_odd_cols(C)
+print(f'Количество отрицательных элементов в матрице С в области 4 в нечетных столбцах: {count1}')
+
+            
 
 
-print('F+A')
-FA = []
-for i in range(N):                                             #заготовка для суммы матриц А и F
-    FA.append([])
-    for j in range(N):
-        FA[i].append(arr[i][j])
-
-for i in range(N):                                             #складование элементов матриц А и F
-    for j in range(N):
-        FA[i][j] = arr[i][j] + frr[i][j]
-
-
-for i in range(N):                                             #ввывод матрици равное сумме А и F = FA
-    for j in range(N):
-        print('{:4d}'.format(FA[i][j]), end='')
-    print()
-
-tran = []
-for i in range(N):                                             #заготовка для транспонентной матрицы Аt
-    tran.append([])
-    for j in range(N):
-        tran[i].append(arr[i][j])
-
-for i in range(N):                                             #транспонирование матрицы А
-    for j in range(N):
-        tran[j][i] = arr[i][j]
-
-
-print('AT')                                                    #вывод транспонентной матрици Аt
-for i in range(N):
-    for j in range(N):
-        print('{:4d}'.format(tran[i][j]), end='')
-    print()
+F = []
+for row in range(N):
+    cur_row = []
+    for col in range(N):
+        cur_row.append(A[row][col])
+    F.append(cur_row)
+    
+if count > count1:
+    for i in range(n):
+        for j in range(n//2):
+            C[i][j], C[i][n-j-1] = C[i][n-j-1], C[i][j]
 
 
 
-print('FA * AT')
 
-FAT = []                                                        #заготовка под матрицу равной произведению матриц FA и At = FAT
-for i in range(N):
-    FAT.append([])
-    for j in range(N):
-        FAT[i].append(frr[i][j])
+if count <= count1:
+    C, E = E, C
 
+print(C)
+print(E)
+print('Матрица F:')
+for row in range(N):
+    print(F[row])
 
-for i in range(N):
-    for j in range(N):
-        for k in range(N):
-            FAT[i][j] += FA[i][k] * tran[k][j]
+F_mult_A = []  # результат перемножения матрицы F на A
+for row in range(N):
+    F_row = []
+    for i in range(N):
+        sum = 0
+        for j in range(N):
+            sum += F[row][j] * A[j][i]
+        F_row.append(sum)
+    F_mult_A.append(F_row)
 
-for i in range(N):                                              #вывод матрицы FAT
-    for j in range(N):
-        print('{:4d}'.format(FAT[i][j]), end='')
-    print()
+print('Матрица F*A: ')
+for row in range(N):
+    print(F_mult_A[row])
 
-print('K*F')
-FK = []                                                        #заготовка под матрицу F умноженную на k
-for i in range(N):
-    FK.append([])
-    for j in range(N):
-        FK[i].append(frr[i][j])
+A_transpose = [] # транспонированная матрица A
+for row in range(N):
+    A_transpose_row = []
+    for col in range(N):
+        A_transpose_row.append(A[col][row])
+    A_transpose.append(A_transpose_row)
 
-for i in range(N):                                              #умножение элементов матрицы F на коэффициент k
-    for j in range(N):
-        FK[i][j] = k * frr[i][j]
+print('Транспонированная матрица A: ')
+for row in range(N):
+    print(A_transpose[row])
 
-for i in range(N):                                              #вывод матрици равное F*k = FK
-    for j in range(N):
-        print('{:4d}'.format(FK[i][j]), end='')
-    print()
+A_transpose_mult_K = []  # матрица с результатом умножения K * Aт
+for row in range(N):
+    cur_row = []
+    for col in range(N):
+        cur_row.append(0)
+    A_transpose_mult_K.append(
+        cur_row)  # формируем пустую матрицу, чтобы была возможность доступа к элементам матрицы по индексам
 
-print('(F + A) * At - K * F')
-fin = []                                                        #заготовка под матрицу равной FAT - FK
-for i in range(N):
-    fin.append([])
-    for j in range(N):
-        fin[i].append(frr[i][j])
+for row in range(N):
+    for col in range(N):
+        A_transpose_mult_K[row][col] = K * A_transpose[row][
+            col]  # транспонированная матрица А умноженная на константу К
 
-for i in range(N):
-    for j in range(N):
-        fin[i][j] = FAT[i][j] - FK[i][j]
+print('Транспонированная матрица A умноженная на K: ')
+for row in range(N):
+    print(A_transpose_mult_K[row])
 
-for i in range(N):                                              #вывод матрицы равной вырожению (F+A)*At - k * F =
-    for j in range(N):
-        print('{:4d}'.format(fin[i][j]), end='')
-    print()
+result_matrix = []  # результирующая матрица
+for row in range(N):  # формируем пустую матрицу, чтобы была возможность доступа к элементам матрицы по индексам
+    cur_row = []
+    for col in range(N):
+        cur_row.append(0)
+    result_matrix.append(cur_row)
+
+for row in range(N):
+    for col in range(N):
+        result_matrix[row][col] = F_mult_A[row][col] - A_transpose_mult_K[row][col]
+
+print('Результат: ')
+for row in range(N):
+    print(result_matrix[row])
 

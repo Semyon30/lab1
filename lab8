@@ -1,15 +1,26 @@
-#В комиссии К членов выбирается председатель и заместитель. Вывести все возможные варианты. разработать реализацию с использованием графического интерфейса. Допускается использовать любую графическую библиотеку питона. Рекомендуется использовать внутреннюю библиотеку питона tkinter. В программе должны быть реализованы минимум одно окно ввода, одно окно вывода, текстовое поле, кнопка
 import tkinter as tk
 
 def calculate():
-    K = int(entry.get())
-    result = []
-    for i in range(1, K+1):
-        for j in range(1, K+1):
-            if i != j:
-                result.append("Председатель: " + str(i) + ", Заместитель: " + str(j))
-    output.delete(1.0, tk.END)
-    output.insert(tk.END, "\n".join(result))
+    K = entry.get()
+    try:
+        K = int(K)
+        if K <= 0:
+            raise ValueError("Введите положительное число больше нуля")
+        
+        result = []
+        for i in range(1, K+1):
+            for j in range(1, K+1):
+                if i != j:
+                    result.append("Председатель: " + str(i) + ", Заместитель: " + str(j))
+        
+        output.delete(1.0, tk.END)
+        if result:
+            output.insert(tk.END, "\n".join(result))
+        else:
+            output.insert(tk.END, "Нет комбинаций с таким количеством членов")
+    except ValueError as e:
+        output.delete(1.0, tk.END)
+        output.insert(tk.END, str(e))
 
 root = tk.Tk()
 root.title("Выбор председателя и заместителя комиссии")
@@ -29,7 +40,15 @@ calculate_button.pack()
 output_label = tk.Label(root, text="Результат:")
 output_label.pack()
 
-output = tk.Text(root, height=10, width=40)
+# Добавляем скроллбар
+scrollbar = tk.Scrollbar(root)
+scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+output = tk.Text(root, height=10, width=40, yscrollcommand=scrollbar.set)
 output.pack()
 
+# Устанавливаем связь между скроллбаром и текстовым полем
+scrollbar.config(command=output.yview)
+
 root.mainloop()
+

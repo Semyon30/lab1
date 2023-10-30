@@ -1,0 +1,47 @@
+Вычислить сумму знакопеременного ряда |х(2n)|/(2n)!, где х-матрица ранга к (к и матрица задаются случайным образом), n - номер слагаемого. Сумма считается вычисленной, если точность вычислений будет не меньше t знаков после запятой. У алгоритма д.б. линейная сложность. Знак первого слагаемого  -.
+import numpy as np
+
+# Функция для вычисления факториала
+def factorial(n):
+    result = 1
+    for i in range(1, n+1):
+        result *= i
+    return result
+
+# Функция для вычисления суммы ряда
+def compute_series_sum(x, k, t):
+    # Вычисляем норму матрицы x
+    norm_x = np.linalg.norm(x)
+    
+    n = 0
+    factorial_val = 1
+    epsilon = 10**(-t)
+    
+    # Начальное значение суммы
+    sum_result = -norm_x**(2*n) / factorial_val
+    
+    while True:
+        n += 1
+        
+        # Обновляем значение факториала
+        factorial_val *= (2*n)*(2*n-1)
+        
+        # Вычисляем текущее слагаемое
+        current_term = norm_x**(2*n) / factorial_val
+        
+        # Обновляем сумму
+        sum_result += ((-1)**n) * current_term
+        
+        # Проверяем условие завершения
+        if abs(current_term) < epsilon:
+            break
+            
+    return round(sum_result, t)
+
+# Пример использования
+x = np.random.rand(3, 3) # Произвольная матрица 3x3
+k = 3 # Ранг матрицы
+t = 6 # Желаемая точность
+
+result = compute_series_sum(x, k, t)
+print(result)

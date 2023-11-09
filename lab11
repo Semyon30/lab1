@@ -1,0 +1,31 @@
+import random
+import math
+
+def factorial(n):
+    if n == 0:
+        return 1
+    else:
+        return n * factorial(n-1)
+
+def calculate_series_sum(x, k, t):
+    sum_result = 0
+    n = 0
+    while True:
+        element = abs(x*(2*n+1)) / factorial(2*n+1)
+        if round(element, t) == 0:
+            break
+        sum_result += element
+        n += 1
+    return round(sum_result, t)
+
+# Генерируем случайную матрицу размера k
+k = random.randint(2, 5)
+matrix = [[random.uniform(-1, 1) for _ in range(k)] for _ in range(k)]
+
+# Устанавливаем точность вычислений
+t = 6
+
+# Пример использования
+x = random.uniform(-1, 1)
+result = calculate_series_sum(x, k, t)
+print(f"Сумма ряда: {result}")

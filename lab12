@@ -10,46 +10,51 @@ def factorial(n):
 def compute_series_sum(x, k, t):
     # Проверка на положительность точности
     if t <= 0:
-       print("Ошибка: Точность t должна быть положительным числом.")
-       exit()  
-
+        print("Ошибка: Точность t должна быть положительным числом.")
+        return None
 
     # Вычисление нормы матрицы x
     norm_x = np.linalg.norm(x)
-    
+
     n = 0
     factorial_val = 1
     epsilon = 10**(-t)
-    
+
     # Начальное значение суммы
     sum_result = -norm_x**(2*n) / factorial_val
-    
+
     while True:
         n += 1
-        
+
         # Обновление значения факториала
         factorial_val *= (2*n)*(2*n-1)
-        
+
         # Вычисление текущего слагаемого
         current_term = norm_x**(2*n) / factorial_val
-        
+
         # Обновление суммы с учетом знака
         sum_result += ((-1)**n) * current_term
-        
+
         # Проверка условия завершения
         if abs(current_term) < epsilon:
             break
-            
+
     # Форматирование строки с желаемой точностью
     result_str = "{:.{prec}f}".format(sum_result, prec=t)
     return float(result_str)
 
-# Пример использования
-x = np.random.rand(3, 3)
-k = 3
-t = 0
-result = compute_series_sum(x, k, t)
-print(f"Сумма ряда: {result}")
-
-        
-  
+# Ввод данных с клавиатуры и вычисление суммы ряда
+try:
+    x = np.random.rand(3, 3)
+    k = 3
+    t = int(input("Введите желаемую точность t: "))  # Ввод значения t с клавиатуры
+    if t <= 0:
+        print("Ошибка: Точность t должна быть положительным числом.")
+    else:
+        result = compute_series_sum(x, k, t)
+        if result is not None:
+            print(f"Сумма ряда: {result}")
+except ValueError:
+    print("Ошибка: Пожалуйста, введите целое число для точности t.")
+except KeyboardInterrupt:
+    print("\nПрограмма прервана пользователем.")

@@ -1,4 +1,5 @@
 import csv
+
 with open('titanic.csv', 'r') as file:
     reader = csv.DictReader(file)
     # Создаем переменные для подсчета количества людей разного пола и выживших
@@ -8,50 +9,52 @@ with open('titanic.csv', 'r') as file:
     
     # Проходим по каждой строке в CSV файле
     for row in reader:
-        # Проверяем класс и пол пассажира, а также информацию о выживании
+        # Проверяем класс, пол пассажира, информацию о выживании и порт посадки
         pclass = int(row['Pclass'])
         sex = row['Sex']
         survived = int(row['Survived'])
+        embarked = row['Embarked']
         
-        # Считаем количество мужчин и женщин в каждом классе и сколько из них выжило
-        if pclass == 1:
-            if sex == 'male':
-                male_count_class1 += 1
-                if survived == 1:
-                    survived_male_class1 += 1
-            else:
-                female_count_class1 += 1
-                if survived == 1:
-                    survived_female_class1 += 1
-        elif pclass == 2:
-            if sex == 'male':
-                male_count_class2 += 1
-                if survived == 1:
-                    survived_male_class2 += 1
-            else:
-                female_count_class2 += 1
-                if survived == 1:
-                    survived_female_class2 += 1
-        elif pclass == 3:
-            if sex == 'male':
-                male_count_class3 += 1
-                if survived == 1:
-                    survived_male_class3 += 1
-            else:
-                female_count_class3 += 1
-                if survived == 1:
-                    survived_female_class3 += 1
+        # Учитываем только пассажиров, севших в Queenstown (Квинстаун)
+        if embarked == 'Q':
+            # Считаем количество мужчин и женщин в каждом классе и сколько из них выжило
+            if pclass == 1:
+                if sex == 'male':
+                    male_count_class1 += 1
+                    if survived == 1:
+                        survived_male_class1 += 1
+                else:
+                    female_count_class1 += 1
+                    if survived == 1:
+                        survived_female_class1 += 1
+            elif pclass == 2:
+                if sex == 'male':
+                    male_count_class2 += 1
+                    if survived == 1:
+                        survived_male_class2 += 1
+                else:
+                    female_count_class2 += 1
+                    if survived == 1:
+                        survived_female_class2 += 1
+            elif pclass == 3:
+                if sex == 'male':
+                    male_count_class3 += 1
+                    if survived == 1:
+                        survived_male_class3 += 1
+                else:
+                    female_count_class3 += 1
+                    if survived == 1:
+                        survived_female_class3 += 1
 
-# Выводим результаты
-print("Первый класс:")
-print(f"Мужчины: {male_count_class1}, Выжило: {survived_male_class1}")
-print(f"Женщины: {female_count_class1}, Выжило: {survived_female_class1}")
+    # Выводим результаты
+    print("Первый класс:")
+    print(f"Мужчины: {male_count_class1}, Выжило: {survived_male_class1}")
+    print(f"Женщины: {female_count_class1}, Выжило: {survived_female_class1}")
 
-print("\nВторой класс:")
-print(f"Мужчины: {male_count_class2}, Выжило: {survived_male_class2}")
-print(f"Женщины: {female_count_class2}, Выжило: {survived_female_class2}")
+    print("\nВторой класс:")
+    print(f"Мужчины: {male_count_class2}, Выжило: {survived_male_class2}")
+    print(f"Женщины: {female_count_class2}, Выжило: {survived_female_class2}")
 
-print("\nТретий класс:")
-print(f"Мужчины: {male_count_class3}, Выжило: {survived_male_class3}")
-print(f"Женщины: {female_count_class3}, Выжило: {survived_female_class3}") 
-    
+    print("\nТретий класс:")
+    print(f"Мужчины: {male_count_class3}, Выжило: {survived_male_class3}")
+    print(f"Женщины: {female_count_class3}, Выжило: {survived_female_class3}")

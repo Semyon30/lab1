@@ -1,9 +1,6 @@
 #Вычислить сумму знакопеременного ряда |х(2n)|/(2n)!, где х-матрица ранга к (к и матрица задаются случайным образом), n - номер слагаемого. Сумма считается вычисленной, если точность вычислений будет не меньше t знаков после запятой. У алгоритма д.б. линейная сложность. Знак первого слагаемого  -.
 import numpy as np
-
-
 from decimal import Decimal, getcontext
-from math import factorial
 
 # Функция для вычисления суммы ряда
 def compute_series_sum(x, k, t):
@@ -42,18 +39,18 @@ def compute_series_sum(x, k, t):
     result_str = "{:.{prec}f}".format(sum_result, prec=t)
     return float(result_str)
 
-# Ввод данных с клавиатуры и вычисление суммы ряда
-try:
-    x = np.random.rand(3, 3)
-    k = 3
-    t = int(input("Введите желаемую точность t: "))  # Ввод значения t с клавиатуры
-    if t <= 0:
-        print("Ошибка: Точность t должна быть положительным числом.")
-    else:
-        result = compute_series_sum(x, k, t)
-        if result is not None:
-            print(f"Сумма ряда: {result}")
-except ValueError:
-    print("Ошибка: Пожалуйста, введите целое число для точности t.")
-except KeyboardInterrupt:
-    print("\nПрограмма прервана пользователем.")
+# Генерация матрицы и ввод точности с клавиатуры
+x = np.random.rand(3, 3)
+k = 3
+t = int(input("Введите желаемую точность t: "))  # Ввод значения t с клавиатуры
+
+# Проверка и вычисление суммы ряда
+if t <= 0:
+    print("Ошибка: Точность t должна быть положительным числом.")
+else:
+    result = compute_series_sum(x, k, t)
+    if result is not None:
+        print(f"Сумма ряда: {result}")
+
+
+      

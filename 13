@@ -1,14 +1,25 @@
-#2.	Определить количество мужчин и женщин  в 1,2 и 3 классе, севших в порту Квинстаун, и сколько из них выжило.
+#2.Определить количество мужчин и женщин  в 1,2 и 3 классе, севших в порту Квинстаун, и сколько из них выжило.
 
 import csv
 
 with open('titanic.csv', 'r') as file:
     reader = csv.DictReader(file)
     # Создаем переменные для подсчета количества людей разного пола и выживших
-    male_count_class1 = female_count_class1 = survived_male_class1 = survived_female_class1 = 0
-    male_count_class2 = female_count_class2 = survived_male_class2 = survived_female_class2 = 0
-    male_count_class3 = female_count_class3 = survived_male_class3 = survived_female_class3 = 0
-    
+    #1класс
+    male_count_class1 =0
+    female_count_class1 =0
+    survived_male_class1 = 0
+    survived_female_class1 = 0
+    #2класс
+    male_count_class2 =0
+    female_count_class2 =0
+    survived_male_class2 =0
+    survived_female_class2 = 0
+    #3класс
+    male_count_class3 =0
+    female_count_class3 =0
+    survived_male_class3 =0
+    survived_female_class3 = 0
     # Проходим по каждой строке в CSV файле
     for row in reader:
         # Проверяем класс, пол пассажира, информацию о выживании и порт посадки
@@ -60,3 +71,4 @@ with open('titanic.csv', 'r') as file:
     print("\nТретий класс:")
     print(f"Мужчины: {male_count_class3}, Выжило: {survived_male_class3}")
     print(f"Женщины: {female_count_class3}, Выжило: {survived_female_class3}")
+

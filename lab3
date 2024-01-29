@@ -1,199 +1,148 @@
-# Формируется матрица F следующим образом: если в С количество положительных элементов в четных столбцах в области 2
-# больше, чем количество отрицательных  элементов в нечетных столбцах в области 4, то поменять в С симметрично
-# области 1 и 3 местами, иначе С и Е поменять местами несимметрично. При этом матрица А не меняется. После чего
-# После чего вычисляется выражение: ((F * A) – (K * Aт). Выводятся по мере формирования А, F и все матричные операции последовательно.
-
-
+#Формируется матрица F следующим образом: если в Е сумма чисел, больших К в нечетных столбцах в области 3 больше, чем произведение чисел в области 2, то поменять в Е симметрично области 1 и 2 местами, 
+#иначе С и В поменять местами. При этом матрица А не меняется. 
+#После чего вычисляется выражение: ((К*A)*F+ K* F T . Выводятся по мере формирования А, F и все матричные операции последовательно.
+#           1
+# E B    4    2
+# C D       3  
 import random
+def print_matrix(mat):
+    for row in mat:
+        for elem in row:
+            print('{:4}'.format(elem), end=' ')
+        print()
 
-K_test = 3
-N_test = 11
-A_test = [
-    [1, 2, 3, 4, 5, 4, -9, 8, -1, 5, 3],
-    [6, 7, 8, 9, 10, 2, -4, -8, -5, -1, 3],
-    [10, 9, 8, 7, 6, 9, -3, 3, 5, -1, -9],
-    [5, 4, 3, 2, 1, -5, 2, 7, 3, 8, 0],
-    [1, 2, 3, 4, 5, -4, 3, 3, -2, 4, -1],
-    [-1, 8, 6, 10, -3, 7, -8, -9, -9, -5, 2],
-    [-2, -6, -3, 1, 2, -3, 0, 5, 0, 0, 7],
-    [-7, 10, -4, -8, -9, -9, 0, 5, 0, -10, -4],
-    [3, 6, -9, 7, 2, -10, 4, 0, 2, -4, 0],
-    [10, 9, 9, 5, 8, -8, -8, 0, 10, -7, 1],
-    [6, -5, 0, 1, -5, -3, -5, 0, 7, -2, 0]]
+def pastemat(matF, matrix, column_index, row_index):
+    a = column_index
+    for row in matrix:
+        for element in row:
+            matF[row_index][column_index] = element
+            column_index += 1
+        row_index += 1
+        column_index = a
 
-print('Использовать тестовые данные или случайные?')
-choice = input('Ваш выбор (1 - тестовые данные, 2 - случайные, q-выход): ')
+def matzero(size):
+    return [[0 for _ in range(size)] for _ in range(size)]
 
-if choice == '1':
-    K = K_test
-    N = N_test
-    A = A_test
+def matrix_input(mat, i1, i2, j1, j2):
+    zero_mat = matzero(len(mat) // 2)
+    for i in range(i1, i2):
+        for j in range(j1, j2):
+            zero_mat[i - i1][j - j1] = mat[i][j]
+    return zero_mat
+try:
+    K = int(input('Введите число K: '))
+    n = int(input('Введите число N, больше или равное 5: '))
+    while n < 5:
+        n = int(input('Введите число N, большее или равное 5: '))
+except ValueError:
+    print('Введенный символ не является числом.')
+    exit(0)
 
-if choice == '2':
-    K = int(input('Введите K: '))
-    N = int(input('Введите N: '))
+ans = input('использования случайно сгенерированной матрицы напишите 1, для единичиной матрицы введите 2')
+if ans not in ['1', '2']:
+    print('Попробуйте ещё')
+    while ans not in ['1','2']:
+        ans = input('для использования случайно сгенерированной матрицы напишите 1, для единичной матрицы введите 2 ')
 
-    if (N < 6):
-        print('Ошибка в исходных данных. Длина сторон матрицы А (N,N) должна быть больше 5!')
-        exit()
+if ans == '1':
+    matA = [[random.randint(-10, 10) for _ in range(n)] for _ in range(n)]
+if ans == '2':
+    matA = [[random.randint(1, 1) for _ in range(n)] for _ in range(n)]
 
-    A = []
-    for row in range(N):
-        cur_row = []
-        for col in range(N):
-            cur_row.append(random.randint(-10, 10))
-        A.append(cur_row)
+print('Матрица А изначальная:')
+print_matrix(matA)
 
-B, C, D, E = [], [], [], []
-n = N // 2  # размерность матриц B, C, D, E (n x n)
+half_n = n // 2
+fix_n = half_n
+if n % 2 != 0:
+    fix_n += 1
 
-if N % 2 == 0:
-    step = N // 2
+matB = matrix_input(matA, 0, half_n, fix_n, n)
+matC = matrix_input(matA, fix_n, n, fix_n, n)
+matD = matrix_input(matA, fix_n, n, 0, half_n)
+matE = matrix_input(matA, 0, half_n, 0, half_n)
+
+print('Подматрицы матрицы A:')
+print('Подматрица B')
+print_matrix(matB)
+print('Подматрица С')
+print_matrix(matC)
+print('Подматрица D')
+print_matrix(matD)
+print('Подматрица E')
+print_matrix(matE)
+
+odd_col_sum = 0
+for i in range(n // 4, half_n):
+    for j in range(half_n - i - 1, i + 1):
+        if j % 2 != 0 and matE[i][j] > K:
+            odd_col_sum += matE[i][j]
+comp = 1
+for i in range(half_n):
+    for j in range(n//4,half_n):
+        if i==j and j>=(half_n-1)//2: #числа на главной диагонали
+            comp *= matE[i][j]
+        elif i+j==half_n-1 and j>=(half_n-1)//2: #числа на побочной диагонали
+            comp *= matE[i][j]
+    if i!=half_n-1 and i!=0: #числа на третьей стороне треугольника - крайний правый столбец, в котором верхнее и нижнее число не берутся, так как они уже учтены в диагоналях
+        print(i,matE[i][half_n-1])
+        comp*=matE[i][half_n-1]
+print('Сумма чисел, больших K, в нечетных столбцах области 3:', odd_col_sum)
+print('Произведение чисел по периметру в области 2:', comp)
+
+if odd_col_sum > comp:
+    print('Сумма чисел, больших K, в нечетных столбцах области 3 оказалась больше, чем произведение чисел по периметру области 2')
+    print('Начальная подматрица E:')
+    print_matrix(matE)
+    for i in range(n // 4, half_n):
+        for j in range(half_n - i - 1, half_n):
+            matE[i][j], matE[half_n - 1 - j][half_n - 1 - i] = matE[half_n - 1 - j][half_n - 1 - i], matE[i][j]
+
+    print('Получившаяся подматрица E:')
+    print_matrix(matE)
 else:
-    step = N // 2 + 1
+    print('Сумма чисел, больших K, в нечетных столбцах области 3 оказалась меньше, чем произведение чисел по периметру области 2')
+    matC, matB = matB, matC
 
-for row in range(n):
-    row_b, row_c, row_d, row_e = [], [], [], []
-    for col in range(n):
-        row_e.append(A[row][col])
-        row_b.append(A[row][col + step])
-        row_d.append(A[row + step][col])
-        row_c.append(A[row + step][col + step])
-    B.append(row_b)
-    C.append(row_c)
-    D.append(row_d)
-    E.append(row_e)
+matF = matA.copy()
+pastemat(matF, matE, 0, 0)
+pastemat(matF, matB, fix_n, 0)
+pastemat(matF, matC, fix_n, fix_n)
+pastemat(matF, matD, 0, fix_n)
 
-if choice == 'q':
-    exit()
-
-# печатаем матрицы E, B, C, D, A
-print('Матрица E:')
-for row in range(n):
-    print(E[row])
-
-print('Матрица B:')
-for row in range(n):
-    print(B[row])
-
-print('Матрица C:')
-for row in range(n):
-    print(C[row])
-
-print('Матрица D:')
-for row in range(n):
-    print(D[row])
-
-print('Матрица A:')
-for row in range(N):
-    print(A[row])
-
-# количество положительных элементов в четных столбцах в области 2
-def count_positive_even_cols(matrix):
-    count = 0
-    for i in range(len(matrix)):
-     if 1 <= i <= len(matrix) // 2:  
-        for j in range(0, len(matrix[i]), 2):  
-             if matrix[i][j] > 0:
-              count += 1
-    return count
-count = count_positive_even_cols(C)
-print(f'Количество положительных элементов в матрице С в области 2 в четных столбцах: {count}')
-
-#количество отрицательных  элементов в нечетных столбцах в области 4
-def count_negative_odd_cols(matrix):
-    count1 = 0
-    for i in range(len(matrix)):
-        if i >= len(matrix) // 2:  
-            for j in range(1, len(matrix[i]), 2): 
-                if matrix[i][j] < 0:
-                    count1 += 1
-    return count1
-
-count1 = count_negative_odd_cols(C)
-print(f'Количество отрицательных элементов в матрице С в области 4 в нечетных столбцах: {count1}')
-
-            
-
-
-F = []
-for row in range(N):
-    cur_row = []
-    for col in range(N):
-        cur_row.append(A[row][col])
-    F.append(cur_row)
-    
-if count > count1:
-    for i in range(n):
-        for j in range(n//2):
-            C[i][j], C[i][n-j-1] = C[i][n-j-1], C[i][j]
-
-
-
-
-if count <= count1:
-    C, E = E, C
-
-print(C)
-print(E)
 print('Матрица F:')
-for row in range(N):
-    print(F[row])
+print_matrix(matF)
 
-F_mult_A = []  # результат перемножения матрицы F на A
-for row in range(N):
-    F_row = []
-    for i in range(N):
-        sum = 0
-        for j in range(N):
-            sum += F[row][j] * A[j][i]
-        F_row.append(sum)
-    F_mult_A.append(F_row)
+matFt = matzero(n)
 
-print('Матрица F*A: ')
-for row in range(N):
-    print(F_mult_A[row])
+matFt = [[matF[j][i] for j in range(n)] for i in range(n)]
+print('Транспонированная матрица F:')
+print_matrix(matFt)
 
-A_transpose = [] # транспонированная матрица A
-for row in range(N):
-    A_transpose_row = []
-    for col in range(N):
-        A_transpose_row.append(A[col][row])
-    A_transpose.append(A_transpose_row)
+# Вычисление первого слагаемого (K * A) * F
+first_term = matzero(n)
+for i in range(n):
+    for j in range(n):
+        first_term[i][j] = K * matA[i][j]
 
-print('Транспонированная матрица A: ')
-for row in range(N):
-    print(A_transpose[row])
+matAF = matzero(n)
+for i in range(n):
+    for j in range(n):
+        matAF[i][j] += first_term[i][j] * matF[i][j]
 
-A_transpose_mult_K = []  # матрица с результатом умножения K * Aт
-for row in range(N):
-    cur_row = []
-    for col in range(N):
-        cur_row.append(0)
-    A_transpose_mult_K.append(
-        cur_row)  # формируем пустую матрицу, чтобы была возможность доступа к элементам матрицы по индексам
+# Вычисление второго слагаемого K * F^T
+second_term = [[K * elem for elem in row] for row in matFt]
 
-for row in range(N):
-    for col in range(N):
-        A_transpose_mult_K[row][col] = K * A_transpose[row][
-            col]  # транспонированная матрица А умноженная на константу К
+# Суммирование первого и второго слагаемого
+result = matzero(n)
+for i in range(n):
+    for j in range(n):
+        result[i][j] = matAF[i][j] + second_term[i][j]
 
-print('Транспонированная матрица A умноженная на K: ')
-for row in range(N):
-    print(A_transpose_mult_K[row])
+print('Первое слагаемое (K * A) * F:')
+print_matrix(matAF)
+print('Второе слагаемое K * F^T:')
+print_matrix(second_term)
 
-result_matrix = []  # результирующая матрица
-for row in range(N):  # формируем пустую матрицу, чтобы была возможность доступа к элементам матрицы по индексам
-    cur_row = []
-    for col in range(N):
-        cur_row.append(0)
-    result_matrix.append(cur_row)
-
-for row in range(N):
-    for col in range(N):
-        result_matrix[row][col] = F_mult_A[row][col] - A_transpose_mult_K[row][col]
-
-print('Результат: ')
-for row in range(N):
-    print(result_matrix[row])
-
+print('Результат сложения двух слагаемых:')
+print_matrix(result)
